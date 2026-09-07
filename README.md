@@ -1,3 +1,5 @@
+![md-writer: typing markdown, then bolding and italicising a phrase](docs/demo.gif)
+
 # md-writer
 
 An elegantly minimal writer for `.md` files.
@@ -9,7 +11,8 @@ text is edited in an IDE that treats prose as source code, or in a notes app tha
 wants to own the file and hand it back as something else.
 
 md-writer is the small thing in between: a calm page that renders markdown as you
-type it, and saves plain text back exactly where it came from.
+type it, and saves plain text back exactly where it came from. Press F11 to get
+fullscreen and enjoy a super clean interface to simply write, or read.
 
 ## What it does
 
@@ -23,7 +26,8 @@ outside it. What you save is byte-for-byte what you wrote.
 
 ## Running it
 
-Open `index.html` in a browser. That's the whole install.
+Open `index.html` in a browser. That's the whole install. Or host it on your own
+domain — like we do on https://md.ivar.studio
 
 It is one file — no build step, no dependencies, no bundler, no server, no
 telemetry. Drop it on any static host, or keep it as a local bookmark. The only
