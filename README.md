@@ -76,6 +76,12 @@ Three controls in the header, and they stay out of the way:
 All of it persists in `localStorage`. Nothing else is stored, and nothing leaves
 the browser.
 
+## Android
+
+A native Android version is in the works — the same design and the same grammar,
+built on Android's own text stack rather than a WebView. It will be linked here
+once it is on Google Play.
+
 ## License
 
 MIT © IVAR Studios
