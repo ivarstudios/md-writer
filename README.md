@@ -92,4 +92,8 @@ once it is on Google Play.
 
 ## License
 
-MIT © IVAR Studios
+MIT © IVAR Studios. That covers the source code, including the Windows app.
+
+The md-writer name and icon belong to IVAR Studios and aren't covered by the MIT
+license. You're welcome to build, change and share the code, but a
+redistributed version needs its own name and icon.
