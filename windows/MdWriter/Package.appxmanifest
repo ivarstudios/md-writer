@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap5 rescap">
+
+  <!-- From Partner Center > md-writer > Product identity. -->
+  <Identity
+    Name="IVARStudios.md-writer"
+    Publisher="CN=341D2112-5BF3-4CF3-A24F-B3527F111E31"
+    Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>md-writer</DisplayName>
+    <PublisherDisplayName>IVAR Studios</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
+        DisplayName="md-writer"
+        Description="An elegantly minimal writer and viewer for markdown and plain text."
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="markdown">
+            <uap:DisplayName>Markdown document</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/markdown">.md</uap:FileType>
+              <uap:FileType ContentType="text/markdown">.markdown</uap:FileType>
+              <uap:FileType ContentType="text/markdown">.mdown</uap:FileType>
+              <uap:FileType ContentType="text/markdown">.mkd</uap:FileType>
+              <uap:FileType ContentType="text/markdown">.mdx</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="text">
+            <uap:DisplayName>Text document</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.txt</uap:FileType>
+              <uap:FileType ContentType="text/plain">.text</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="log">
+            <uap:DisplayName>Log or notes file</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.log</uap:FileType>
+              <uap:FileType ContentType="text/plain">.todo</uap:FileType>
+              <uap:FileType ContentType="text/plain">.nfo</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="markup">
+            <uap:DisplayName>Light markup document</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/plain">.rst</uap:FileType>
+              <uap:FileType ContentType="text/plain">.adoc</uap:FileType>
+              <uap:FileType ContentType="text/plain">.org</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <!-- `md-writer notes.md` from any terminal -->
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="MdWriter.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:AppExecutionAlias>
+            <uap5:ExecutionAlias Alias="md-writer.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

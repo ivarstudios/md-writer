@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>md-writer trailer</title>
+<link rel="stylesheet" href="stage.css">
+</head>
+<body>
+<div id="stage">
+  <div id="bg-light" class="bg bg-light"></div>
+  <div id="bg-dark" class="bg bg-dark"></div>
+
+  <div id="intro" class="card">
+    <img class="icon" src="icon.svg" alt="">
+    <div class="word">md-writer</div>
+    <div class="tag">A calm place for your markdown.</div>
+  </div>
+
+  <div id="file"><div class="box"><div class="glyph">&#xE8A5;</div><div class="label">meeting-notes.txt</div></div></div>
+
+  <div id="w1" class="win"><iframe src="app.html"></iframe><div class="caption"><span>&#xE921;</span><span>&#xE922;</span><span>&#xE8BB;</span></div></div>
+  <div id="w2" class="win"><iframe src="app.html"></iframe><div class="caption"><span>&#xE921;</span><span>&#xE922;</span><span>&#xE8BB;</span></div></div>
+
+  <div id="menu" class="menu">
+    <div class="item" data-id="open"><span class="ico">&#xE8E5;</span>Open</div>
+    <div class="item" data-id="openwith"><span class="ico">&#xE7AC;</span>Open with<span class="chev">&#xE76C;</span></div>
+    <div class="sep"></div>
+    <div class="item"><span class="ico">&#xE8C8;</span>Copy as path</div>
+    <div class="item"><span class="ico">&#xE946;</span>Properties</div>
+  </div>
+  <div id="submenu" class="menu">
+    <div class="item" data-id="mdwriter"><span class="ico"><img src="icon.svg" alt=""></span>md-writer</div>
+    <div class="sep"></div>
+    <div class="item"><span class="ico">&#xE71D;</span>Choose another app</div>
+  </div>
+
+  <div id="agent"><span class="spark">&#10022;</span><span>An agent is writing to <b>launch-notes.md</b></span><span class="dots"><span></span><span></span><span></span></span></div>
+
+  <svg id="leaders"></svg>
+  <div id="callouts" class="layer"></div>
+  <div id="carets" class="layer"><div id="caret1" class="caret"></div><div id="caret2" class="caret"></div></div>
+  <div id="keys"></div>
+  <div id="ripples" class="layer"></div>
+  <div id="pointer">
+    <svg class="arrow" viewBox="0 0 24 35" width="30" height="44"><path d="M2 2 L2 28.5 L8.3 22.6 L12.5 32.2 L16.6 30.4 L12.5 21 L20.9 21 Z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    <svg class="beam" viewBox="0 0 24 35" width="30" height="44" style="display:none"><path d="M8 4.5 Q12 4.5 12 7.5 Q12 4.5 16 4.5 M12 7.5 V27.5 M8 30.5 Q12 30.5 12 27.5 Q12 30.5 16 30.5" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M8 4.5 Q12 4.5 12 7.5 Q12 4.5 16 4.5 M12 7.5 V27.5 M8 30.5 Q12 30.5 12 27.5 Q12 30.5 16 30.5" fill="none" stroke="#111" stroke-width="1.6" stroke-linecap="round"/></svg>
+  </div>
+
+  <div id="end" class="card">
+    <img class="icon" src="icon.svg" alt="">
+    <div class="word">md-writer</div>
+    <div class="tag">Less chrome. More words.</div>
+    <div class="small"><b>Available on the Microsoft Store</b> &nbsp;&middot;&nbsp; Offline &nbsp;&middot;&nbsp; No account &nbsp;&middot;&nbsp; No telemetry</div>
+  </div>
+</div>
+<script src="stage.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>writer</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9998;</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 173.2 200'><polygon points='86.6,0 173.2,50 173.2,150 86.6,200 0,150 0,50' fill='%23333'/><polygon points='86.6,16.3 158.5,58.15 158.5,141.85 86.6,183.7 14.1,141.85 14.1,58.15' fill='%23fff'/><g fill='%23333'><polygon points='41.1,58.5 47.6,58.5 44.6,86.5 38.1,86.5'/><polygon points='52.6,58.5 59.1,58.5 56.1,86.5 49.6,86.5'/><rect x='34.6' y='63.5' width='28' height='6.5'/><rect x='34.6' y='75' width='28' height='6.5'/><rect x='68.6' y='66' width='42' height='13' rx='6.5'/><rect x='68.6' y='98.5' width='62' height='9' rx='4.5'/><rect x='68.6' y='115.5' width='62' height='9' rx='4.5'/><rect x='68.6' y='132.5' width='37.2' height='9' rx='4.5'/></g></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap">
@@ -16,6 +16,13 @@
       stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.dataset.font = localStorage.getItem('writer-font') || 'serif';
     document.documentElement.style.setProperty('--scale', localStorage.getItem('writer-scale') || '1');
+    // Inside the Windows app the page runs in WebView2, and the host injects window.mdHost first.
+    if (window.chrome && window.chrome.webview) {
+      var host = window.mdHost || {};
+      document.documentElement.classList.add('host');
+      document.documentElement.dataset.backdrop = host.backdrop || 'none';
+      document.documentElement.style.setProperty('--caption-inset', (host.captionInset || 0) + 'px');
+    }
   })();
 </script>
 <style>
@@ -246,6 +253,57 @@
     border-radius: .6em;
     padding: .15em .5em;
   }
+
+  @media print {
+    header, #status, #notice { display: none; }
+    .editor { padding: 0; max-width: none; }
+  }
+
+  /* ---------- Windows app only: the header doubles as the title bar ---------- */
+  /* Below 100% lets the window's Mica backdrop tint the page, but the header then reads as a separate band. */
+  :root.host { --veil: 100%; }
+  /* The app sets type in Georgia, which every Windows install has, so it needs no web font. */
+  :root.host body, :root.host .glyph.icon-serif { font-family: Georgia, serif; }
+  :root.host body { background: color-mix(in srgb, var(--bg) var(--veil), transparent); }
+  :root.host header {
+    height: 48px;
+    padding: 0 calc(var(--caption-inset) + .4rem) 0 1rem;
+  }
+  :root.host #sizer { right: calc(var(--caption-inset) + .8rem); }
+  .actions button[hidden] { display: none; }
+  #btn-md.on { color: var(--accent); }
+  .ctrl .link, .ctrl .url { cursor: pointer; }
+
+  #notice {
+    position: fixed;
+    top: calc(48px + .6rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    max-width: calc(100vw - 2rem);
+    padding: .4rem .5rem .4rem .9rem;
+    border-radius: .6rem;
+    background: color-mix(in srgb, var(--bg) 94%, var(--fg));
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .14);
+    font: 13px system-ui, sans-serif;
+    color: var(--muted);
+  }
+  #notice[hidden] { display: none; }
+  #notice-text { margin-right: .5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #notice button {
+    background: none;
+    border: 0;
+    padding: .25rem .5rem;
+    border-radius: .4rem;
+    font: inherit;
+    color: var(--accent);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  #notice button:hover { background: var(--hover); }
 </style>
 </head>
 <body>
@@ -253,6 +311,9 @@
 <header>
   <span id="filename">untitled.md</span>
   <div class="actions">
+    <button id="btn-md" title="Markdown styling" hidden>
+      <svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6.5 15V9l2.5 3 2.5-3v6M17 9v6m-2.2-2.2L17 15l2.2-2.2"/></svg>
+    </button>
     <button id="btn-open" title="Open (Ctrl+O)">
       <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
     </button>
@@ -274,6 +335,7 @@
   </div>
 </header>
 
+<div id="notice" role="status" hidden><span id="notice-text"></span><button id="notice-yes"></button><button id="notice-no"></button></div>
 <main id="editor" class="editor" contenteditable="true" spellcheck="true"></main>
 <div id="status"><span id="selcount" hidden></span><span id="wordcount"></span></div>
 <input id="file-input" type="file" accept=".md,.markdown,.txt" hidden>
@@ -295,6 +357,12 @@ let redoStack = [];
 let current = { text: '', caret: 0 };
 let lastPushTime = -Infinity;
 let composing = false;
+
+// In the Windows app, WebView2 gives the page a message channel to the native host.
+const host = window.chrome && window.chrome.webview ? window.chrome.webview : null;
+let styled = true;          // markdown styling; plain text files open without it in the app
+let pendingSave = null;     // text handed to the host to save, until it confirms
+let postedDirty = false;
 
 const MD_TYPES = [{ description: 'Markdown', accept: { 'text/markdown': ['.md', '.markdown'] } }];
 
@@ -356,7 +424,10 @@ function render() {
   for (const line of editor.children) {
     const raw = line.textContent.replace(/ /g, ' ');
     let cls, html;
-    if (/^ {0,3}(`{3,}|~{3,})/.test(raw)) {
+    if (!styled) {
+      cls = 'line';
+      html = escapeHtml(raw);
+    } else if (/^ {0,3}(`{3,}|~{3,})/.test(raw)) {
       cls = 'line fence';
       html = mark(raw);
       fence = !fence;
@@ -569,6 +640,10 @@ function updateStatus() {
   fileNameEl.textContent = fileName;
   fileNameEl.classList.toggle('dirty', dirty);
   document.title = (dirty ? '● ' : '') + fileName;
+  if (host && dirty !== postedDirty) {
+    postedDirty = dirty;
+    host.postMessage({ type: 'dirty', dirty: dirty });
+  }
   const words = countWords(text);
   wordCountEl.textContent = words + (words === 1 ? ' word' : ' words');
   updateSelectionCount();
@@ -587,8 +662,8 @@ function updateSelectionCount() {
 
 /* ---------- file open / save ---------- */
 
-function loadDocument(text, name, handle) {
-  if (getText() !== savedText && !confirm('Discard unsaved changes?')) return;
+function loadDocument(text, name, handle, force) {
+  if (!force && getText() !== savedText && !confirm('Discard unsaved changes?')) return;
   fileHandle = handle || null;
   fileName = name || 'untitled.md';
   setText(text.replace(/\r\n?/g, '\n'));
@@ -604,6 +679,7 @@ function loadDocument(text, name, handle) {
 }
 
 async function openFile() {
+  if (host) return host.postMessage({ type: 'open' });
   try {
     if ('showOpenFilePicker' in window) {
       const [handle] = await showOpenFilePicker({ types: MD_TYPES });
@@ -619,6 +695,10 @@ async function openFile() {
 
 async function saveFile(saveAs) {
   const text = getText();
+  if (host) {
+    pendingSave = text;
+    return host.postMessage({ type: 'save', text: text, saveAs: !!saveAs });
+  }
   try {
     if ('showSaveFilePicker' in window) {
       if (!fileHandle || saveAs) {
@@ -694,12 +774,18 @@ function toggleTheme() {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
   localStorage.setItem('writer-theme', next);
+  postTheme();
 }
 
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
   if (!localStorage.getItem('writer-theme'))
     document.documentElement.dataset.theme = e.matches ? 'dark' : 'light';
+  postTheme();
 });
+
+function postTheme() {
+  if (host) host.postMessage({ type: 'theme', dark: document.documentElement.dataset.theme === 'dark' });
+}
 
 /* ---------- events ---------- */
 
@@ -767,6 +853,11 @@ document.addEventListener('keydown', e => {
 window.addEventListener('dragover', e => e.preventDefault());
 window.addEventListener('drop', e => {
   e.preventDefault();
+  if (host) {
+    // The host needs real paths (to save in place and watch), which only it can resolve.
+    if (e.dataTransfer.files.length) host.postMessageWithAdditionalObjects({ type: 'drop' }, e.dataTransfer.files);
+    return;
+  }
   const item = e.dataTransfer.items && e.dataTransfer.items[0];
   if (!item || item.kind !== 'file') return;
   const file = item.getAsFile();
@@ -778,7 +869,7 @@ window.addEventListener('drop', e => {
 });
 
 window.addEventListener('beforeunload', e => {
-  if (getText() !== savedText) {
+  if (!host && getText() !== savedText) {
     e.preventDefault();
     e.returnValue = '';
   }
@@ -791,11 +882,165 @@ document.getElementById('btn-theme').addEventListener('click', toggleTheme);
 
 document.addEventListener('selectionchange', updateSelectionCount);
 
+/* ---------- Windows app host bridge (never runs on the web) ---------- */
+
+function startHostBridge() {
+  // No spellcheck in the app: its squiggles fight the markdown, and code words are rarely in a dictionary.
+  editor.spellcheck = false;
+  const root = document.documentElement;
+  const header = document.querySelector('header');
+  const actions = document.querySelector('.actions');
+  const mdButton = document.getElementById('btn-md');
+  const notice = document.getElementById('notice');
+  const noticeText = document.getElementById('notice-text');
+  const noticeYes = document.getElementById('notice-yes');
+  const noticeNo = document.getElementById('notice-no');
+
+  function showNotice(text, yes, onYes, no, onNo) {
+    noticeText.textContent = text;
+    noticeYes.textContent = yes;
+    noticeNo.textContent = no;
+    noticeYes.onclick = () => { hideNotice(); onYes(); };
+    noticeNo.onclick = () => { hideNotice(); if (onNo) onNo(); };
+    notice.hidden = false;
+  }
+
+  function hideNotice() {
+    if (notice.hidden) return;
+    notice.hidden = true;
+    editor.focus({ preventScroll: true });
+  }
+
+  // Swap in new text from disk as one undoable step, keeping the reading position
+  // (or following the end, for files that grow like logs).
+  function reloadText(text) {
+    const scroller = document.documentElement;
+    const atEnd = window.innerHeight + window.scrollY >= scroller.scrollHeight - 4;
+    const y = window.scrollY;
+    const caret = caretOffset();
+    buildLines(text);
+    render();
+    if (caret !== null) setCaretOffset(Math.min(caret, text.length));
+    savedText = getText();
+    recordChange(true);
+    updateStatus();
+    window.scrollTo(0, atEnd ? scroller.scrollHeight : y);
+  }
+
+  function diskChanged(text) {
+    text = text.replace(/\r\n?/g, '\n');
+    hideNotice();
+    if (getText() === text) {
+      savedText = text;
+      updateStatus();
+    } else if (getText() === savedText) {
+      reloadText(text);
+    } else {
+      showNotice(fileName + ' changed on disk.', 'Reload', () => reloadText(text),
+        'Keep mine', () => { savedText = text; updateStatus(); });
+    }
+  }
+
+  function postTitleBar() {
+    const r = actions.getBoundingClientRect();
+    host.postMessage({ type: 'titlebar', height: header.offsetHeight, x: r.left, y: r.top, w: r.width, h: r.height });
+  }
+
+  function nudgeScale(delta) {
+    setScale(Math.round((parseFloat(sizeRange.value) + delta) * 20) / 20);
+    showSizer();
+  }
+
+  host.addEventListener('message', e => {
+    const m = e.data;
+    if (m.type === 'load') {
+      styled = m.styled;
+      mdButton.hidden = !m.toggle;
+      mdButton.classList.toggle('on', styled);
+      if (m.mono) root.dataset.font = 'mono';
+      hideNotice();
+      loadDocument(m.text, m.name, null, true);
+    } else if (m.type === 'changed') {
+      diskChanged(m.text);
+    } else if (m.type === 'deleted') {
+      savedText = null;
+      updateStatus();
+      showNotice(fileName + ' was moved or deleted.', 'Save it here', () => saveFile(false), 'Dismiss');
+    } else if (m.type === 'saved') {
+      if (pendingSave !== null) savedText = pendingSave;
+      pendingSave = null;
+      fileName = m.name;
+      hideNotice();
+      updateStatus();
+    } else if (m.type === 'save-failed') {
+      pendingSave = null;
+    } else if (m.type === 'chrome') {
+      root.style.setProperty('--caption-inset', m.captionInset + 'px');
+      root.classList.toggle('fullscreen', m.fullscreen);
+      postTitleBar();
+    }
+  });
+
+  mdButton.addEventListener('click', () => {
+    styled = !styled;
+    mdButton.classList.toggle('on', styled);
+    render();
+    host.postMessage({ type: 'styled', on: styled });
+  });
+
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey;
+    const k = e.key.toLowerCase();
+    let msg = null;
+    if (e.key === 'F11' || (e.key === 'Escape' && root.classList.contains('fullscreen'))) msg = { type: 'fullscreen' };
+    else if (mod && !e.shiftKey && k === 'n') msg = { type: 'new' };
+    else if (mod && k === 'w') msg = { type: 'close' };
+    else if (mod && k === 'f') msg = { type: 'find' };
+    else if (mod && k === 'p') msg = { type: 'print' };
+    else if (mod && (k === '=' || k === '+')) { e.preventDefault(); nudgeScale(.05); }
+    else if (mod && k === '-') { e.preventDefault(); nudgeScale(-.05); }
+    else if (mod && k === '0') { e.preventDefault(); setScale(1); showSizer(); }
+    if (msg) {
+      e.preventDefault();
+      host.postMessage(msg);
+    }
+  });
+
+  // Browser zoom is off in the app; Ctrl+wheel drives the text size instead.
+  window.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    nudgeScale(e.deltaY < 0 ? .05 : -.05);
+  }, { passive: false });
+
+  // Ctrl+click follows a markdown link: web links open in the browser, relative ones in a new window.
+  const trackCtrl = e => root.classList.toggle('ctrl', e.ctrlKey);
+  document.addEventListener('keydown', trackCtrl);
+  document.addEventListener('keyup', trackCtrl);
+  window.addEventListener('blur', () => root.classList.remove('ctrl'));
+  editor.addEventListener('click', e => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    let el = e.target.closest && e.target.closest('.link, .url');
+    while (el && !el.classList.contains('url')) el = el.nextElementSibling;
+    const href = el && el.textContent.trim().split(/\s+/)[0].replace(/^<|>$/g, '');
+    if (!href) return;
+    e.preventDefault();
+    host.postMessage({ type: 'link', href: href });
+  });
+
+  new ResizeObserver(postTitleBar).observe(actions);
+  window.addEventListener('resize', postTitleBar);
+  postTitleBar();
+  postTheme();
+  host.postMessage({ type: 'ready' });
+}
+
 /* ---------- init ---------- */
 
 setText('');
 updateStatus();
 editor.focus();
+if (host) startHostBridge();
 </script>
 </body>
 </html>

@@ -76,6 +76,14 @@ Three controls in the header, and they stay out of the way:
 All of it persists in `localStorage`. Nothing else is stored, and nothing leaves
 the browser.
 
+## Windows
+
+A native Windows app is on its way to the Microsoft Store. It's the same page
+in a small WinUI 3 shell, and it adds right-click → Open with for markdown,
+text and log files, one window per file, live reload when a file changes on
+disk, and saving that keeps each file's encoding and line endings. It works
+fully offline. The source and build steps are in [windows/](windows/).
+
 ## Android
 
 A native Android version is in the works — the same design and the same grammar,
